@@ -8,16 +8,27 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0-beta.49",
     "@expo/samples": "2.1.1",
+    "ajv": "^6.0.0",
+    "eslint": "^4.0.0",
     "expo": "^27.0.1",
     "react": "16.3.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-27.0.0.tar.gz",
+    "react-native": "^0.55.4",
     "react-native-action-button": "^2.8.4",
     "react-native-background-audio": "^1.1.4",
+    "react-native-camera": "^1.1.4",
+    "react-native-material-design": "^0.3.7",
+    "react-native-material-design-styles": "^0.2.7",
+    "react-native-modal-picker": "0.0.16",
+    "react-native-permissions": "^1.1.1",
     "react-native-qrcode": "^0.2.6",
+    "react-native-qrcode-scanner": "^1.0.1",
+    "react-native-star-rating": "^1.0.9",
     "react-native-swipe-list-view": "^1.1.1",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "1.5.11"
+    "react-navigation": "1.5.11",
+    "ws": "^3.3.1"
   },
   "devDependencies": {
     "jest-expo": "^27.0.0"

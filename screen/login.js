@@ -38,7 +38,7 @@ export default class login extends Component {
           .then((responseJson) => {
 
             if (responseJson == 'Member') {
-              this.props.navigation.navigate("UserProfile");
+              this.props.navigation.navigate("HomePage",{userName:this.state.TextInput_username});
 							Alert.alert("Logged in successfully");
             } else if (responseJson == 'Admin') {
 							this.props.navigation.navigate("Admin");

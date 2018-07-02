@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ListView, Alert, ActivityIndicator,TouchableOpacity,
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  ListView, 
+  Alert, 
+  ActivityIndicator,
+  TouchableOpacity,
   TouchableHighlight, } from 'react-native';
 import { StackNavigator, NavigationActions} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons'; // 4.2.0
@@ -20,17 +27,18 @@ export default class Admin extends Component {
   static navigationOptions= ({navigation}) =>({
       title: 'QR Section List',
       headerLeft: null
-    });
+  });
 
   constructor(props){
       super(props);
       this.state = {
         isLoading: true,
+        ID: ''
       }
   }
 
   GetSectionIDFunction=(qr_ID, qr_Title,qr_Description)=>{
-    this.props.navigation.navigate('QrOrQuestion', {
+    this.props.navigation.navigate('Question', {
       qr_ID : qr_ID,
       qr_Title : qr_Title,
       qr_Description : qr_Description
@@ -45,28 +53,75 @@ export default class Admin extends Component {
     });
   }
 
-  
-  componentDidMount() {
-    return fetch('http://www.224tech.com/sasPhp/sectionlistJson.php')
-     .then((response) => response.json())
-     .then((responseJson) => {
-       let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-       this.setState({
-          isLoading: false,
-          dataSource: ds.cloneWithRows(responseJson),
-       }, function() {
-         // In this block you can do something with new state.
-        
-       });
-     })
-     .catch((error) => {
-       console.error(error);
-     });
+  _gevWarning = (qr_ID) =>{
+    let QRID = qr_ID;
+    Alert.alert(
+      'Warning',
+      'Are you sure you want to delete ?',
+      [
+        {text: 'No', onPress: ()=> console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Yes', onPress: ()=> this.DeleteSectionRecord(QRID)  },
+      ],
+      {cancelable: true}
+    );
   }
 
+DeleteSectionRecord = (QRID) =>{
+    console.log(QRID);
+    fetch('http://www.224tech.com/sasPhp/deleteSection.php', {
+    method: 'POST',
+    headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'data-Type': 'json'
+    },
+    body: JSON.stringify({      
+     ID :QRID
+    })
+
+  })
+  
+  .then((response) => {console.log(response);  return response.json();})
+  .then((responseJson) => {
+
+    // Showing response message coming from server updating records.
+    Alert.alert(responseJson);
+
+    if (responseJson == "Qr Section Deleted") {
+      this.props.navigation.dispatch(NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'Admin'})]
+      }));
+    }
+
+  }).catch((error) => {
+    console.error(error);
+  });
+
+}
+
+  
+componentDidMount() {
+  return fetch('http://www.224tech.com/sasPhp/seminarlistJson.php')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      this.setState({
+        isLoading: false,
+        dataSource: ds.cloneWithRows(responseJson),
+      }, function() {
+        // In this block you can do something with new state.
+      
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
   
 
-  render() {
+render() {
     if (this.state.isLoading) {
       return (
         <View style={{flex: 1, paddingTop: 20}}>
@@ -90,7 +145,10 @@ export default class Admin extends Component {
                           <View style={styles.switchContainer}>
                             <TouchableOpacity
                               style={styles.switchLeft}
-                              onPress={_gevWarning} >
+                              onPress={this._gevWarning.bind(
+                                this,rowData.qr_ID,
+                                rowData.qr_Title,
+                                rowData.qr_Description)} >
                               <Text style={styles.txtStyles}>DELETE</Text>
                             </TouchableOpacity>
 
@@ -98,8 +156,8 @@ export default class Admin extends Component {
                               style={styles.switchRight}
                               onPress={this.EditSectionIDFunction.bind(
                                 this,rowData.qr_ID,
-                                  rowData.qr_Title,
-                                  rowData.qr_Description
+                                rowData.qr_Title,
+                                rowData.qr_Description
                               )}>
                               <Text style={styles.txtStyles}>EDIT</Text>
                             </TouchableOpacity>
@@ -158,21 +216,7 @@ export default class Admin extends Component {
       </View>
     );
   }
-}
-
-const _gevWarning = () =>{
-  Alert.alert(
-    'Warning',
-    'Are you sure you want to delete ?',
-    [
-      {text: 'No', onPress: ()=> console.log('Cancel Pressed'), style: 'cancel'},
-      {text: 'Yes', onPress: ()=>{
-        console.log('Ask me later pressed')
-      }},
-    ],
-    {cancelable: true}
-  );
-}
+} 
 
 const SectionManager = StackNavigator({
     Admin: {screen: Admin},
@@ -188,6 +232,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5FCFF',
+    marginTop:10
   },
   welcome: {
     fontSize: 20,

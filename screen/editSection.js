@@ -10,7 +10,9 @@ export default class EditSection extends Component {
 			title: 'Edit Qr Section',
 	});
   constructor(props) {
+    
     super(props);
+    //console.log(props);
     let ID = this.props.navigation.state.params.qr_ID;
     let Title = this.props.navigation.state.params.qr_Title;
     let Description = this.props.navigation.state.params.qr_Description;
@@ -20,6 +22,7 @@ export default class EditSection extends Component {
       TextInput_SectionDescription: Description,
       
     };
+    console.log(this.state);
   }
 
   displayMessage = () => {
@@ -55,15 +58,14 @@ export default class EditSection extends Component {
 
 
   render() {
+    
     return (  
         <View style={styles.MainContainer}>
         <Card>
           <CardSection>
             <View style={styles.MainContainer}>
     					<KeyboardAvoidingView behavior="padding">
-                <Text style={styles.TextTag}>
-                   Edit QR Section
-                </Text>
+                
                 <Text style={styles.TextTag}>
                    ID: {this.state.TextInput_ID}
                 </Text>

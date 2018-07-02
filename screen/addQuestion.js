@@ -1,380 +1,231 @@
 import React, { Component } from 'react';
-import b64 from 'base64-js';
-import { StyleSheet, View, Alert, TextInput, Button, Text, Platform, TouchableOpacity, ListView, ActivityIndicator, Switch } from 'react-native';
+import { StyleSheet, View,TextInput,Text, Platform, TouchableOpacity,Picker } from 'react-native';
 import { TabNavigator, StackNavigator, NavigationActions} from 'react-navigation';
+
 
 class Question extends React.Component {
 
   constructor(props) {
-
-       super(props)
-
-       this.state = {
-
-         TextInput_ID: '',
-         TextInput_Username: '',
-         TextInput_Fullname: '',
-         TextInput_Email: '',
-         TextInput_Password: '',
-         
-
-       }
-
-     }
-
-     componentDidMount(){
-
-      // Received Student Details Sent From Previous Activity and Set Into State.
-      /*this.setState({
-        TextInput_ID : this.props.navigation.state.params.id,
-        TextInput_Username : this.props.navigation.state.params.username,
-        TextInput_Fullname: this.props.navigation.state.params.name,
-        TextInput_Email: this.props.navigation.state.params.email,
-        TextInput_Password: this.props.navigation.state.params.password,
-        
-      })*/
-
-     }
-
-    static navigationOptions =
-    {
+    console.log('addQuestion');
+    console.log(props);
+    super(props)
+    let qr_ID = this.props.navigation.state.params.ID;
+    this.state = {
+      qr_ID:qr_ID,
+      TextInput_Question: '',
+      TextInput_A: '',
+      TextInput_B: '',
+      TextInput_C: '',
+      TextInput_D: '',
+      TextInput_Answer:'',
+    }
+  }
+  static navigationOptions =    {
        title: 'Add New Question',
-    };
-
-    UpdateMemberRecord = () =>{
-
-            fetch('http://www.224tech.com/reactPhp/updateMember.php', {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-
-              id : this.state.TextInput_ID,
-
-              username : this.state.TextInput_Username,
-
-              fullname : this.state.TextInput_Fullname,
-
-              email : this.state.TextInput_Email,
-
-              password : this.state.TextInput_Password,
-
-              isVerified : (this.state.Switch_IsVerified==true) ? 1 : 0
-
-
-            })
-
-            }).then((response) => response.json())
-                .then((responseJson) => {
-
-                  // Showing response message coming from server updating records.
-                  Alert.alert(responseJson);
-
-                  if (responseJson == 'Updated Successfully!') {
-                    this.props.navigation.dispatch(NavigationActions.reset({
-                      index: 0,
-                      actions: [NavigationActions.navigate({ routeName: 'ManageMembers'})]
-                    }));
-                  }
-
-                }).catch((error) => {
-                  console.error(error);
-                });
-
-      }
-
-
-    DeleteMemberRecord = () =>{
-
-          fetch('http://www.224tech.com/reactPhp/deleteMember.php', {
-          method: 'POST',
-          headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-
-            username : this.state.TextInput_Username
-
-          })
-
-          }).then((response) => response.json())
-          .then((responseJson) => {
-
-            // Showing response message coming from server after inserting records.
-            Alert.alert(responseJson);
-
-          }).catch((error) => {
-             console.error(error);
-          });
-
-
-          this.props.navigation.dispatch(NavigationActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'ManageMembers'})]
-          }));
-
-    }
-
-      SwitchGo(value){
-        this.setState({
-          Switch_IsVerified:value
-        });
-      }
-
-
-    render() {
-      return (
-
-   <View style={styles.MainContainer}>
-
-         
-
-          <View style={styles.RowWrapper}>
-            <Text style={styles.RowLabel}>Question:</Text>
-            <TextInput
-
-              placeholder="Question"
-
-              //value={}
-
-              //onChangeText={ TextInputValue => this.setState({ TextInput_Username : TextInputValue }) }
-
-              underlineColorAndroid='transparent'
-
-              style={styles.TextInputStyleClass}
-            />
-          </View>
-
-          <View style={styles.RowWrapper}>
-            <Text style={styles.RowLabel}>A::</Text>
-            <TextInput
-
-              placeholder="Option A"
-
-              //value={this.state.TextInput_Fullname}
-
-             // onChangeText={ TextInputValue => this.setState({ TextInput_Fullname : TextInputValue }) }
-
-              underlineColorAndroid='transparent'
-
-              style={styles.TextInputStyleClass}
-            />
-          </View>
-
-          <View style={styles.RowWrapper}>
-            <Text style={styles.RowLabel}>B:</Text>
-            <TextInput
-
-              placeholder="Option B"
-
-              //value={this.state.TextInput_Email}
-
-              //onChangeText={ TextInputValue => this.setState({ TextInput_Email : TextInputValue }) }
-
-              underlineColorAndroid='transparent'
-
-              style={styles.TextInputStyleClass}
-            />
-          </View>
-
-          <View style={styles.RowWrapper}>
-            <Text style={styles.RowLabel}>C:</Text>
-            <TextInput
-
-              placeholder="Option C"
-
-              //value={this.state.TextInput_Password}
-
-              //onChangeText={ TextInputValue => this.setState({ TextInput_Password : TextInputValue }) }
-
-              underlineColorAndroid='transparent'
-
-              style={styles.TextInputStyleClass}
-            />
-          </View>
-
-          <View style={styles.RowWrapper}>
-            <Text style={styles.RowLabel}>D:</Text>
-            <TextInput
-
-              placeholder="Option D"
-
-              //value={this.state.TextInput_Password}
-
-              //onChangeText={ TextInputValue => this.setState({ TextInput_Password : TextInputValue }) }
-
-              underlineColorAndroid='transparent'
-
-              style={styles.TextInputStyleClass}
-            />
-          </View>
-
-          
-         <TouchableOpacity activeOpacity = { .4 } style={styles.TouchableOpacityStyle} onPress={this.UpdateMemberRecord} >
-
-            <Text style={styles.TextStyle}> Add </Text>
-
-         </TouchableOpacity>
-
+  }; 
+  
+  displayMessage = () => {
+    fetch('http://www.224tech.com/sasPhp/addQuestion.php', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        qr_ID:this.state.qr_ID,
+        Question: this.state.TextInput_Question,
+        A: this.state.TextInput_A,
+        B: this.state.TextInput_B,
+        C: this.state.TextInput_C,
+        D: this.state.TextInput_D,
+        Answer:this.state.TextInput_Answer
+      })
+
+    }).then((response) => response.json())
+          .then((responseJson) => {				
+
+            if (responseJson == 'Question added') {              
+              this.props.navigation.dispatch(NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Admin'})]
+              }));
+            }
+
+      }).catch((error) => {
+        console.error(error);
+      });
+
+  }
+
+  render() {
+   
+    return (
+      <View style={styles.MainContainer}>         
+
+        <View style={styles.RowWrapper}>
+          <Text style={styles.RowLabel}>Question:</Text>
+          <TextInput
+            placeholder="Question"
+            returnKeyType='next'
+            multiline = {true}
+            editable = {true}
+            maxLength = {400}
+            onChangeText={ TextInputValue => this.setState({ TextInput_Question : TextInputValue }) }
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClass}
+          />
+        </View>
+
+        <View style={styles.RowWrapper}>
+          <Text style={styles.RowLabel}>A:</Text>
+          <TextInput
+            placeholder="Option A"
+            returnKeyType='next'
+            onChangeText={ TextInputValue => this.setState({ TextInput_A : TextInputValue }) }
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClass}
+          />
+        </View>
+
+        <View style={styles.RowWrapper}>
+          <Text style={styles.RowLabel}>B:</Text>
+          <TextInput
+            placeholder="Option B"
+            returnKeyType='next'
+            onChangeText={ TextInputValue => this.setState({ TextInput_B : TextInputValue }) }
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClass}
+          />
+        </View>
+
+        <View style={styles.RowWrapper}>
+          <Text style={styles.RowLabel}>C:</Text>
+          <TextInput
+            placeholder="Option C"
+            returnKeyType='next'
+            onChangeText={ TextInputValue => this.setState({ TextInput_C : TextInputValue }) }
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClass}
+          />
+        </View>
+
+        <View style={styles.RowWrapper}>
+          <Text style={styles.RowLabel}>D:</Text>
+          <TextInput
+            placeholder="Option D"
+            returnKeyType='done'
+            onChangeText={ TextInputValue => this.setState({ TextInput_D : TextInputValue }) }                       
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClass}
+           
+          />
+        </View>
         
-
-
-   </View>
-
-      );
-    }
+          <View style={styles.RowWrapper}>
+             
+              <Text style={styles.RowLabel}>Answer:</Text>
+              {(Platform.OS === 'android') ?
+                <Picker
+                  selectedValue={this.state.TextInput_Answer}
+                  style={{ height: 50, width: '100%' }}
+                  onValueChange={(itemValue, itemIndex) => this.setState({TextInput_Answer: itemValue})}>
+                  <Picker.Item label="Select an Answer" value="Select an Answer" />
+                  <Picker.Item label="A" value="A" />
+                  <Picker.Item label="B" value="B" />
+                  <Picker.Item label="C" value="C" />
+                  <Picker.Item label="D" value="D" />
+                </Picker> : 
+                    <TextInput
+                      style={styles.TextInputStyleClass}
+                      editable = {true}
+                      placeholder="Select an Answer!"
+                      returnKeyType='done'
+                      onChangeText={ TextInputValue => this.setState({ TextInput_Answer : TextInputValue }) }/>                
+              }         
+            
+          </View>
+       
+                  
+        <TouchableOpacity activeOpacity = { .4 } style={styles.TouchableOpacityStyle} onPress={this.displayMessage} >
+            <Text style={styles.TextStyle}> Add Question</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
 }
 
 class Rating extends React.Component {
 
   constructor(props) {
-
-       super(props)
-
-       this.state = {
-
-         TextInput_ID: '',
-         TextInput_Username: '',
-         TextInput_Fullname: '',
-         TextInput_Email: '',
-         TextInput_Password: '',
-         
-
-       }
-
-     }
-
-     componentDidMount(){
-
-      // Received Student Details Sent From Previous Activity and Set Into State.
-      /*this.setState({
-        TextInput_ID : this.props.navigation.state.params.id,
-        TextInput_Username : this.props.navigation.state.params.username,
-        TextInput_Fullname: this.props.navigation.state.params.name,
-        TextInput_Email: this.props.navigation.state.params.email,
-        TextInput_Password: this.props.navigation.state.params.password,
-        
-      })*/
-
-     }
-
-    static navigationOptions =
-    {
-       title: 'Add New Rating Question',
-    };
-
-    UpdateMemberRecord = () =>{
-
-            fetch('http://www.224tech.com/reactPhp/updateMember.php', {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-
-              id : this.state.TextInput_ID,
-
-              username : this.state.TextInput_Username,
-
-              fullname : this.state.TextInput_Fullname,
-
-              email : this.state.TextInput_Email,
-
-              password : this.state.TextInput_Password,
-
-              isVerified : (this.state.Switch_IsVerified==true) ? 1 : 0
-
-
-            })
-
-            }).then((response) => response.json())
-                .then((responseJson) => {
-
-                  // Showing response message coming from server updating records.
-                  Alert.alert(responseJson);
-
-                  if (responseJson == 'Updated Successfully!') {
-                    this.props.navigation.dispatch(NavigationActions.reset({
-                      index: 0,
-                      actions: [NavigationActions.navigate({ routeName: 'ManageMembers'})]
-                    }));
-                  }
-
-                }).catch((error) => {
-                  console.error(error);
-                });
-
+      super(props)
+      let qr_IDR = this.props.navigation.state.params.ID;
+      this.state = {
+        qr_ID:qr_IDR,
+        TextInput_Question: '',
       }
+  }
 
+  static navigationOptions =  {
+      title: 'Add New Rating Question',
+  };
 
-    DeleteMemberRecord = () =>{
+  UpdateQR = () =>{
 
-          fetch('http://www.224tech.com/reactPhp/deleteMember.php', {
+          fetch('http://www.224tech.com/sasPhp/updateQR.php', {
           method: 'POST',
           headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-
-            username : this.state.TextInput_Username
-
+            qr_ID:this.state.qr_ID,
+            Question: this.state.TextInput_Question,
           })
 
           }).then((response) => response.json())
-          .then((responseJson) => {
+              .then((responseJson) => {
+                // Showing response message coming from server updating records.
+                //Alert.alert(responseJson);
 
-            // Showing response message coming from server after inserting records.
-            Alert.alert(responseJson);
+                if (responseJson == 'Question added') {              
+                  this.props.navigation.dispatch(NavigationActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({ routeName: 'Admin'})]
+                  }));
+                }
 
-          }).catch((error) => {
-             console.error(error);
-          });
+              }).catch((error) => {
+                console.error(error);
+              });
 
+  }
 
-          this.props.navigation.dispatch(NavigationActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'ManageMembers'})]
-          }));
+  render() {
+    return (
+      <View style={styles.MainContainerRating}>        
+        <View style={styles.RowWrapperRating}>
+          <Text style={styles.RowLabelRating}>Question:</Text>
+          <TextInput
+            placeholder="Question"
+            multiline = {true}
+            editable = {true}
+            maxLength = {400}
+            onChangeText={ TextInputValue => this.setState({ TextInput_Question : TextInputValue }) }
+            underlineColorAndroid='transparent'
+            style={styles.TextInputStyleClassRating}
+          />
+        </View>
+        
+        <TouchableOpacity activeOpacity = { .4 } style={styles.TouchableOpacityStyleRating} onPress={this.UpdateQR} >
 
-    }
+          <Text style={styles.TextStyle}> Add </Text>
 
-      SwitchGo(value){
-        this.setState({
-          Switch_IsVerified:value
-        });
-      }
+        </TouchableOpacity>
+     </View>
 
-
-    render() {
-      return (
-
-   <View style={styles.MainContainerRating}>
-
-          
-          <View style={styles.RowWrapperRating}>
-            <Text style={styles.RowLabelRating}>Question:</Text>
-            <TextInput
-              placeholder="Question"
-              underlineColorAndroid='transparent'
-              style={styles.TextInputStyleClassRating}
-            />
-          </View>
-          
-         <TouchableOpacity activeOpacity = { .4 } style={styles.TouchableOpacityStyleRating} onPress={this.UpdateMemberRecord} >
-
-            <Text style={styles.TextStyle}> Add </Text>
-
-         </TouchableOpacity>
-   </View>
-
-      );
-    }
+    );
+  }
 
 }
 
@@ -480,3 +331,4 @@ export default TabNavigator({
   	swipeEnabled: false,
 
 });
+

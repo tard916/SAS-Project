@@ -5,8 +5,6 @@ import { StackNavigator, NavigationActions} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons'; // 4.2.0
 import ActionButton from 'react-native-action-button'; // 2.7.2
 import { SwipeListView , SwipeRow} from 'react-native-swipe-list-view';
-import AddQuestion from "./addQuestion";
-
 
 import Card from './Card';
 import CardSection from './CardSection';
@@ -22,15 +20,35 @@ export default class Questions extends Component {
       console.log('Question');
       console.log(props);
       let txtQr_ID = this.props.navigation.state.params.qr_ID;
+      let userLoged = this.props.navigation.state.params.userLoged;
       this.state = {
         isLoading: true,
         txtQr_ID : txtQr_ID,
+        userLoged:userLoged
       }
+  }
+
+  GetSectionIDFunction=(question_ID, question_content, question_Type)=>{
+    console.log(question_Type);
+    if(question_Type == 'MCQ'){
+      this.props.navigation.navigate('ServeyResult', {
+        question_ID : question_ID,
+        question_content :question_content,
+        userLoged:this.state.userLoged
+      });
+    } else if(question_Type == 'Rating'){
+      this.props.navigation.navigate('ServeyRating', {
+        question_ID : question_ID,
+        question_content :question_content,
+        userLoged:this.state.userLoged
+      });
+    }
+    
   }
   
   componentDidMount() {   
 
-    return fetch('http://www.224tech.com/sasPhp/questionlistJson.php', {
+    return fetch('http://www.224tech.com/sasPhp/serveyQuestionList.php', {
       method: 'POST',
       headers: {
       'Accept': 'application/json',
@@ -74,30 +92,23 @@ export default class Questions extends Component {
               <Card >
                 <CardSection > 
                  <View style={styles.standalone}>
-                    <SwipeRow leftOpenValue={121} rightOpenValue={-118}>
+                    <SwipeRow leftOpenValue={0} rightOpenValue={-0}>
 
                       <View style={styles.standaloneRowBack}>
                         <View style={styles.controls}>
                           <View style={styles.switchContainer}>
-                            <TouchableOpacity
-                              style={styles.switchLeft}
-                              onPress={_gevWarning} >
-                              <Text style={styles.txtStyles}>DELETE</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                              style={styles.switchRight}
-                              onPress={console.log('pressed')}
-                              >
-                              <Text style={styles.txtStyles}>EDIT</Text>
-                            </TouchableOpacity>
-
+                           
                           </View>
                         </View>
                       </View>
                       <View style={styles.standaloneRowFront}>
                         <TouchableOpacity
-                          onPress={console.log('pressed')}>
+                          onPress={
+                            this.GetSectionIDFunction.bind(
+                              this,rowData.question_ID,
+                              rowData.question_content,
+                              rowData.question_Type,
+                          )}>
                           <Text>
                             ID: {` ${rowData.question_ID} `}
                           </Text>
@@ -123,22 +134,6 @@ export default class Questions extends Component {
         leftOpenValue={75}
         rightOpenValue={-75}
         />
-       
-          <ActionButton buttonColor="#3498db" >
-            <ActionButton.Item buttonColor='#007cc2' title="Add Question" onPress={() => this.props.navigation.navigate('AddQuestion', {ID : this.state.txtQr_ID,})}>
-              <Icon name="md-create" style={styles.actionButtonIcon} />
-            </ActionButton.Item>
-            <ActionButton.Item buttonColor='#007cc2' title="QR Code" onPress={() => this.props.navigation.navigate('QrGenerator', {ID : this.state.txtQr_ID,})}>
-              <Icon name="md-qr-scanner" style={styles.actionButtonIcon} />
-            </ActionButton.Item>
-            <ActionButton.Item buttonColor="rgba(231,76,60,1)" title="Logout" onPress={() => this.props.navigation.dispatch(NavigationActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Login'})]
-              }))}>
-              <Icon name="ios-log-out" style={styles.actionButtonIcon} />
-            </ActionButton.Item>          
-          </ActionButton>
-       
       </View>
     );
   }
